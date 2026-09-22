@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import prisma from "../config/prisma.js";
+import { AppError } from "../errors/AppError.js";
 
 type SignupInput = {
   name: string;
@@ -15,7 +16,7 @@ export async function signupUser(data: SignupInput) {
   });
 
   if (existingUser) {
-    throw new Error("User with this email already exists");
+    throw new AppError("User with this email already exists", 409);
   }
 
   const hashedPassword = await bcrypt.hash(data.password, 12);

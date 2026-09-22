@@ -22,3 +22,7 @@ Thumbs.db
 .idea/
 
 backend/src/generated/prisma
+
+# Postman local files
+.postman/
+postman/
