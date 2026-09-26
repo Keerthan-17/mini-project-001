@@ -36,3 +36,22 @@ export async function getUserSubmissions(userId: number) {
 
   return submissions;
 }
+
+export async function getAllSubmissions() {
+  const submissions = await prisma.formSubmission.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  return submissions;
+}
