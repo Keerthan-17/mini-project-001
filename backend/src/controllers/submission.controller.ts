@@ -4,6 +4,7 @@ import {
   createSubmission,
   getUserSubmissions,
 } from "../services/submission.service.js";
+import { sendSuccess } from "../utils/response.js";
 
 export async function submitForm(
   req: Request,
@@ -17,9 +18,7 @@ export async function submitForm(
 
     const submission = await createSubmission(userId, validatedData);
 
-    return res.status(201).json({
-      success: true,
-      message: "Form submitted successfully",
+    return sendSuccess(res, 201, "Form submitted successfully", {
       submission,
     });
   } catch (error) {
@@ -37,8 +36,7 @@ export async function getMySubmissions(
 
     const submissions = await getUserSubmissions(userId);
 
-    return res.status(200).json({
-      success: true,
+    return sendSuccess(res, 200, "Submissions fetched successfully", {
       submissions,
     });
   } catch (error) {

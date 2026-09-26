@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { signupSchema, loginSchema } from "../validators/auth.validator.js";
 import { signupUser, loginUser } from "../services/auth.service.js";
+import { sendSuccess } from "../utils/response.js";
 
 export async function signup(req: Request, res: Response, next: NextFunction) {
   try {
@@ -8,8 +9,7 @@ export async function signup(req: Request, res: Response, next: NextFunction) {
 
     const user = await signupUser(validatedData);
 
-    return res.status(201).json({
-      message: "User registered successfully",
+    return sendSuccess(res, 201, "User registered successfully", {
       user,
     });
   } catch (error) {
@@ -23,20 +23,14 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 
     const result = await loginUser(validatedData);
 
-    return res.status(200).json({
-      success: true,
-      message: "Login successful",
-      ...result,
-    });
+    return sendSuccess(res, 200, "Login successful", result);
   } catch (error) {
     next(error);
   }
 }
 
 export function getMe(req: Request, res: Response) {
-  return res.status(200).json({
-    success: true,
-    message: "You are authenticated",
+  return sendSuccess(res, 200, "Authenticated successfully", {
     user: req.user,
   });
 }

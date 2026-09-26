@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { getAllSubmissions } from "../services/submission.service.js";
+import { paginationSchema } from "../validators/admin.validator.js";
+import { sendSuccess } from "../utils/response.js";
 
 export async function getAdminSubmissions(
   req: Request,
@@ -7,12 +9,11 @@ export async function getAdminSubmissions(
   next: NextFunction,
 ) {
   try {
-    const submissions = await getAllSubmissions();
+    const { page, limit } = paginationSchema.parse(req.query);
 
-    return res.status(200).json({
-      success: true,
-      submissions,
-    });
+    const result = await getAllSubmissions(page, limit);
+
+    return sendSuccess(res, 200, "Submissions fetched successfully", result);
   } catch (error) {
     next(error);
   }

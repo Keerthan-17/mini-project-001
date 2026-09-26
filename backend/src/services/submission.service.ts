@@ -37,21 +37,41 @@ export async function getUserSubmissions(userId: number) {
   return submissions;
 }
 
-export async function getAllSubmissions() {
-  const submissions = await prisma.formSubmission.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
+export async function getAllSubmissions(page: number, limit: number) {
+  const skip = (page - 1) * limit;
+
+  const [submissions, total] = await Promise.all([
+    prisma.formSubmission.findMany({
+      skip,
+      take: limit,
+
+      orderBy: {
+        createdAt: "desc",
+      },
+
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
         },
       },
-    },
-  });
+    }),
 
-  return submissions;
+    prisma.formSubmission.count(),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    submissions,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages,
+    },
+  };
 }
