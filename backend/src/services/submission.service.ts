@@ -23,3 +23,16 @@ export async function createSubmission(
 
   return submission;
 }
+
+export async function getUserSubmissions(userId: number) {
+  const submissions = await prisma.formSubmission.findMany({
+    where: {
+      userId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return submissions;
+}
