@@ -1,12 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AppError } from "../errors/AppError.js";
-
-const JWT_SECRET = process.env.JWT_SECRET as string;
-
-if (!JWT_SECRET) {
-  throw new Error("JWT_SECRET is not defined");
-}
+import { env } from "../config/env.js";
 
 type JwtPayload = {
   userId: number;
@@ -31,7 +26,7 @@ export function authMiddleware(
       throw new AppError("Authentication required", 401);
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    const decoded = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
 
     req.user = {
       userId: decoded.userId,
